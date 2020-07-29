@@ -1,0 +1,7 @@
+{
+  "invite": "https://discord.com/api/oauth2/authorize?client_id=yourclientID&permissions=yourPermissionsInteger&scope=bot",
+  "token": "y0urD15c0rdT0k3n",
+  "prefix": "--",
+  "admin-channel-id": 123456789,
+  "admin-ids": [123456789]
+}
