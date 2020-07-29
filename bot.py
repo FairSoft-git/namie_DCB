@@ -3,6 +3,7 @@ import discord
 import json
 import os
 import tqdm
+import sys
 
 # create an instance of the client
 print("Creating instance of client...")
@@ -132,12 +133,9 @@ async def on_message(message:discord.Message):
     # Owner commands
     if message.author == appinfo.owner:
         if message.content.startswith(f"{prefix}restart"):
-            if not message.author == appinfo.owner:
-                await message.channel.send("Permission denied.")
-                await message.channel.send(embed=createerror("You don't have permission to use that command!", [["`Suggestion`", "If you think this is a mistake, try debugging the bot."]]))
             x = __file__.split('\\')[len(__file__.split('\\')) - 1]
-            print("Restarting...")
-            await message.channel.send("Restarting...")
+            print("\nRestarting...")
+            await message.channel.send(embed=createembed("RESTARTING", "Please wait 10 seconds before using any more commands."))
             os.system(f"{x}")
             return
 
