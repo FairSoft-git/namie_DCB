@@ -1,13 +1,15 @@
+print("Importing modules...")
 import discord
 import json
 import os
 import tqdm
 
-
 # create an instance of the client
+print("Creating instance of client...")
 client = discord.Client()
 
 # If there are no json files, set them up.
+print("Checking json files...")
 try:
     open("prohibitedwords.json", "r")
 except:
@@ -20,6 +22,7 @@ except:
     open("config.json", "w")
 
 # get the data from the .json files
+print("Fetching data...")
 with open("prohibitedwords.json", "r") as fh:
     prohibited_words = json.load(fh)
 with open("config.json", "r") as fh:
@@ -80,6 +83,10 @@ async def updateStatus() -> None:
     await client.change_presence(status=discord.Status.online, activity=discord.Game(f"{botconfig['prefix']}help"))
 
 @client.event
+async def on_error(event):
+    return
+
+@client.event
 async def on_ready():
     print("Ready.")
     await updateStatus()
@@ -87,10 +94,13 @@ async def on_ready():
 
 @client.event
 async def on_guild_remove(guild):
+    print("Removed from guild.")
     await guild.system_channel.send(embed=createembed("BYE!", "It's been fun!", [["`In case you want me back...`", f"[Here]({botconfig['invite']}) is my invite link!"]]))
 
 @client.event
 async def on_member_join(member:discord.Member):
+
+    print("Checking member.")
 
     if not isValid(member.display_name):
         await client.get_channel(botconfig["admin-channel-id"]).send(embed=createembed("WARNING", "A user tripped the alarm.", [["`Mention`", f"{member.mention}"], ["`ID`", f"{member.id}"]]))
@@ -118,6 +128,7 @@ async def on_message(message:discord.Message):
         await message.channel.send(embed=createerror("You don't have permission to use that command!", ["`Suggestion`", "If you think this is a mistake, please contact a server admin."]))
         return
 
+
     # Owner commands
     if message.author == appinfo.owner:
         if message.content.startswith(f"{prefix}restart"):
@@ -131,6 +142,7 @@ async def on_message(message:discord.Message):
             return
 
         elif message.content.startswith(f"{prefix}test"):
+            print("Testing bot.")
             adminchannel = client.get_channel(botconfig["admin-channel-id"])
             valid = isValid(appinfo.owner.display_name)
             await adminchannel.send(f"Validity: {valid}")
@@ -159,6 +171,7 @@ async def on_message(message:discord.Message):
 
     elif message.content.startswith(f"{prefix}prohibit"):
 
+        print("Added a new prohibited word.")
 
         prohibited_words.append(message.content.replace(f"{prefix}prohibit ", ""))
 
@@ -171,6 +184,8 @@ async def on_message(message:discord.Message):
         return
 
     elif message.content.startswith(f"{prefix}allow "):
+
+        print("Removed a prohibited word.")
 
         try:
             prohibited_words.remove(message.content.replace(f'{prefix}allow ', ''))
@@ -191,6 +206,7 @@ async def on_message(message:discord.Message):
 
     elif message.content.startswith(f"{prefix}prefix"):
 
+
         botconfig["prefix"] = message.content.replace(f"{prefix}prefix ", "")
 
         with open("config.json", "w") as fh:
@@ -200,6 +216,7 @@ async def on_message(message:discord.Message):
 
         await message.channel.send(embed=createembed("INFORMATION", "Prefix updated!", [["`New prefix", f"{botconfig['prefix']}"]]))
 
+        print(f"Changed prefix to {botconfig['prefix']}")
 
         await updateStatus()
 

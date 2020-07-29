@@ -3,3 +3,4 @@ PyNaCl
 dnspython
 discord.py
 async-timeout
+datetime
